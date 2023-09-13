@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
               confirmDismiss: (direction) async {
-                if (direction == DismissDirection.endToStart) {
+                if (direction == DismissDirection.startToEnd) {
                   Todo? editedTask = await Navigator.push(
                       context,
                       MaterialPageRoute(
