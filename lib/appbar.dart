@@ -9,11 +9,10 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: null,
-        flexibleSpace: const Center(
-            child: Image(
-          image: AssetImage("images/logo.png"),
-        )),
+        title: Image.asset(
+          "images/logo.png",
+          width: 150,
+        ),
         backgroundColor: const Color(0xFFFFD200),
       ),
     );

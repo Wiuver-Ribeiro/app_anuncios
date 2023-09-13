@@ -51,8 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
               confirmDismiss: (direction) async {
-                if (direction == DismissDirection.startToEnd) {
-                  Todo editedTask = await Navigator.push(
+                if (direction == DismissDirection.endToStart) {
+                  Todo? editedTask = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => RegisterScreen(tarefa: item)));
@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     });
                   }
                   return false;
-                } else if (direction == DismissDirection.endToStart) {
+                } else {
                   return true;
                 }
               },
@@ -94,7 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
           try {
             Todo todo = await Navigator.push(context,
                 MaterialPageRoute(builder: (context) => RegisterScreen()));
-            _lista.add(todo);
+            setState(() {
+              _lista.add(todo);
+            });
           } catch (error) {
             print("Error: ${error.toString()}");
           }
