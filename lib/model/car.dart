@@ -10,9 +10,17 @@ class Car {
   bool done = false;
   File? image;
 
-  Car(this.title, this.subtitle, this.price, {this.image, this.id});
+  Car(this.title, this.subtitle, this.price, this.image, {this.id});
 
   Car.fromMap(Map map) {
+    // id = map[CarHelper.idColumn];
+    // title = map[CarHelper.nameColumn];
+    // subtitle = map[CarHelper.descriptColumn];
+    // price = map[CarHelper.valueColumn];
+    // image = map[CarHelper.imageColumn] != null
+    //     ? File(map[CarHelper.imageColumn])
+    //     : null;
+
     id = map[CarHelper.idColumn];
     title = map[CarHelper.nameColumn];
     subtitle = map[CarHelper.descriptColumn];

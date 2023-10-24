@@ -1,9 +1,11 @@
 import 'dart:ffi';
 import 'package:app_anuncios/appbar.dart';
+import 'package:app_anuncios/database/cars_helper.dart';
 import 'package:app_anuncios/model/car.dart';
 import 'package:app_anuncios/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:app_anuncios/persistence/file_persistence.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,6 +31,18 @@ void enviarEmail() async {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Car> _lista = List.empty(growable: true);
+  FilePersistence filePersistence = FilePersistence();
+  CarHelper _car = CarHelper();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    filePersistence.getData().then((value) {
+      setState(() {
+        if (value != null) _lista = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (direction == DismissDirection.endToStart) {
                   setState(() {
                     _lista.removeAt(index);
+                    filePersistence.saveData(_lista);
+                    const snackBar = SnackBar(
+                        content: Text('Carro removido com sucesso.'),
+                        backgroundColor: Colors.red);
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   });
                 }
               },
@@ -74,9 +93,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                           builder: (context) => RegisterScreen(tarefa: item)));
                   if (editedTask != null) {
+                    int? result = await _car.edit(editedTask);
+
                     setState(() {
                       _lista.removeAt(index);
                       _lista.insert(index, editedTask);
+                      filePersistence.saveData(_lista);
+
+                      const snackBar = SnackBar(
+                          content: Text('Carro editado com sucesso.'),
+                          backgroundColor: Colors.green);
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     });
                   }
                   return false;

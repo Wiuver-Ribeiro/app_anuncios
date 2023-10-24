@@ -115,12 +115,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   FocusScope.of(context).unfocus();
                                   File? savedImage;
                                   if (_formKey.currentState!.validate()) {
-                                    Car newTask = Car(
-                                      _title.text,
-                                      _subtitle.text,
-                                      _price.text,
-                                      image: savedImage,
-                                    );
+                                    Car newTask = Car(_title.text,
+                                        _subtitle.text, _price.text, _image!);
                                     Navigator.pop(context, newTask);
                                   }
                                 },
