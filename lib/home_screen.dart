@@ -1,7 +1,9 @@
+import 'dart:ffi';
 import 'package:app_anuncios/appbar.dart';
-import 'package:app_anuncios/model/todo.dart';
+import 'package:app_anuncios/model/car.dart';
 import 'package:app_anuncios/register_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,8 +12,23 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+void enviarEmail() async {
+  final Uri params = Uri(
+    scheme: 'mailto',
+    path: 'wiuver.ribeiro@gmail.com',
+    query:
+        'subject=Dados&body=Aqui está os detalhes do carro conforme solicitado! ',
+  );
+  String url = params.toString();
+  if (await canLaunchUrl(Uri.parse(url))) {
+    await launchUrl(Uri.parse(url));
+  } else {
+    debugPrint('Could not launch $url');
+  }
+}
+
 class _HomeScreenState extends State<HomeScreen> {
-  List<Todo> _lista = List.empty(growable: true);
+  List<Car> _lista = List.empty(growable: true);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           separatorBuilder: (context, index) => const Divider(),
           itemCount: _lista.length,
           itemBuilder: (context, index) {
-            Todo item = _lista[index];
+            Car item = _lista[index];
 
             return Dismissible(
               key: UniqueKey(),
@@ -52,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               confirmDismiss: (direction) async {
                 if (direction == DismissDirection.startToEnd) {
-                  Todo? editedTask = await Navigator.push(
+                  Car? editedTask = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => RegisterScreen(tarefa: item)));
@@ -68,12 +85,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
               child: ListTile(
+                leading: item.image != null
+                    ? CircleAvatar(
+                        child: ClipOval(child: Image.file(item.image!)),
+                      )
+                    : const SizedBox(),
                 title: Text(_lista[index].title),
-                subtitle: Text(_lista[index].subtitle),
-                trailing: Text(_lista[index].price),
+                subtitle:
+                    Text(_lista[index].subtitle + " " + _lista[index].price),
+                trailing: FloatingActionButton(
+                  heroTag: _lista[index],
+                  onPressed: enviarEmail,
+                  child: Icon(Icons.share),
+                ),
                 onTap: () {},
                 onLongPress: () async {
-                  Todo editedTask = await Navigator.push(
+                  Car editedTask = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => RegisterScreen(tarefa: item)));
@@ -92,10 +119,15 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           try {
-            Todo todo = await Navigator.push(context,
+            Car todo = await Navigator.push(context,
                 MaterialPageRoute(builder: (context) => RegisterScreen()));
             setState(() {
               _lista.add(todo);
+              final snackBar = SnackBar(
+                content: Text("Carro anunciado com sucesso!"),
+                backgroundColor: Colors.green,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             });
           } catch (error) {
             print("Error: ${error.toString()}");
